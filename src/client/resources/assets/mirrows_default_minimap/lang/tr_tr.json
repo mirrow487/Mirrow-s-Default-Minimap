@@ -1,0 +1,10 @@
+{
+	"key.category.mirrows_default_minimap.minimap": "Mirrow's Default Minimap",
+	"key.mirrows_default_minimap.toggle": "Mini Haritayı Aç/Kapat",
+	"key.mirrows_default_minimap.zoom_in": "Yakınlaştır",
+	"key.mirrows_default_minimap.zoom_out": "Uzaklaştır",
+	"key.mirrows_default_minimap.world_map": "Dünya Haritası",
+	"screen.mirrows_default_minimap.world_map": "Dünya Haritası",
+	"message.mirrows_default_minimap.waypoint_added": "Yer işareti eklendi",
+	"message.mirrows_default_minimap.waypoint_removed": "Yer işareti kaldırıldı"
+}

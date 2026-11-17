@@ -1,0 +1,10 @@
+{
+	"key.category.mirrows_default_minimap.minimap": "Mirrow's Default Minimap",
+	"key.mirrows_default_minimap.toggle": "Toggle Minimap",
+	"key.mirrows_default_minimap.zoom_in": "Zoom In",
+	"key.mirrows_default_minimap.zoom_out": "Zoom Out",
+	"key.mirrows_default_minimap.world_map": "World Map",
+	"screen.mirrows_default_minimap.world_map": "World Map",
+	"message.mirrows_default_minimap.waypoint_added": "Waypoint added",
+	"message.mirrows_default_minimap.waypoint_removed": "Waypoint removed"
+}

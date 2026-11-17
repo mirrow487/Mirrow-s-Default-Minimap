@@ -1,0 +1,19 @@
+{
+	"schemaVersion": 1,
+	"id": "mirrows_default_minimap",
+	"version": "${version}",
+	"name": "Mirrow's Default Minimap",
+	"description": "A client-side minimap that looks exactly like a filled vanilla map.",
+	"authors": ["Mirrow"],
+	"license": "MIT",
+	"environment": "client",
+	"entrypoints": {
+		"client": ["com.mirrow.defaultminimap.MirrowsDefaultMinimapClient"]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}
