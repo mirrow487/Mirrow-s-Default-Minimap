@@ -36,7 +36,9 @@ public final class MinimapHud implements HudElement {
 		}
 
 		int size = config.size;
-		int frame = Math.max(1, Math.round(size * MapDrawer.FRAME_RATIO));
+		// The paper is 64 texels: the map takes the middle, PAPER_INSET texels of paper around it.
+		float texel = size / (float)(64 - MapDrawer.PAPER_INSET * 2);
+		int frame = Math.max(2, Math.round(MapDrawer.PAPER_INSET * texel));
 		int total = size + frame * 2;
 		int margin = config.margin;
 		int x;
@@ -75,7 +77,7 @@ public final class MinimapHud implements HudElement {
 
 		TileCache tiles = session.tiles();
 		tiles.beginFrame(TILE_BUILD_BUDGET);
-		MapDrawer.drawBackground(graphics, x, y, total, total);
+		MapDrawer.drawPaper(graphics, x, y, total, total, texel);
 		MapDrawer.drawTiles(graphics, tiles, view);
 		MapDrawer.drawWaypoints(graphics, view, session.waypoints().all());
 		MapDrawer.drawPlayer(graphics, view, player, partialTick);

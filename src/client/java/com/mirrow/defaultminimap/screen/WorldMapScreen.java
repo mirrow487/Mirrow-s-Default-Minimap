@@ -30,6 +30,12 @@ public final class WorldMapScreen extends Screen {
 	private int zoom = DEFAULT_ZOOM;
 	private boolean centered;
 	private Component zoomLabel;
+	private float texel = 3.0F;
+
+	/** Size of one paper texel: square, scaled with the screen so the border stays in proportion. */
+	private static float paperTexel(final int width, final int height) {
+		return Mth.clamp(Math.min(width, height) / 96.0F, 2.0F, 6.0F);
+	}
 
 	public WorldMapScreen() {
 		super(Component.translatable("screen.mirrows_default_minimap.world_map"));
@@ -62,7 +68,8 @@ public final class WorldMapScreen extends Screen {
 		int frameY = OUTER_MARGIN;
 		int frameW = this.width - OUTER_MARGIN * 2;
 		int frameH = this.height - OUTER_MARGIN * 2;
-		int border = Math.max(2, Math.round(Math.min(frameW, frameH) * MapDrawer.FRAME_RATIO * 0.5F));
+		this.texel = paperTexel(frameW, frameH);
+		int border = Math.round(MapDrawer.PAPER_INSET * this.texel);
 		float bpp = ZOOM_LEVELS[this.zoom];
 		int shift = bpp <= 1.0F ? 0 : Math.min(TileCache.MAX_SCALE_SHIFT, Integer.numberOfTrailingZeros((int)bpp));
 		MapDrawer.View view = this.view;
@@ -74,7 +81,7 @@ public final class WorldMapScreen extends Screen {
 		view.centerZ = this.centerZ;
 		view.scaleShift = shift;
 		view.pixelSize = (1 << shift) / bpp;
-		view.iconSize = 8.0F * Mth.clamp(view.pixelSize, 1.0F, 2.0F);
+		view.iconSize = 12.0F * Mth.clamp(view.pixelSize, 1.0F, 2.0F);
 	}
 
 	@Override
@@ -95,7 +102,7 @@ public final class WorldMapScreen extends Screen {
 		MapDrawer.View view = this.view;
 		TileCache tiles = session.tiles();
 		tiles.beginFrame(TILE_BUILD_BUDGET);
-		MapDrawer.drawBackground(graphics, OUTER_MARGIN, OUTER_MARGIN, this.width - OUTER_MARGIN * 2, this.height - OUTER_MARGIN * 2);
+		MapDrawer.drawPaper(graphics, OUTER_MARGIN, OUTER_MARGIN, this.width - OUTER_MARGIN * 2, this.height - OUTER_MARGIN * 2, this.texel);
 		MapDrawer.drawTiles(graphics, tiles, view);
 		graphics.enableScissor(view.x - 4, view.y - 4, view.x + view.width + 4, view.y + view.height + 4);
 		MapDrawer.drawWaypoints(graphics, view, session.waypoints().all());

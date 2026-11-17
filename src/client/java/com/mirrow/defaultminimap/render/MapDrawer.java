@@ -21,8 +21,6 @@ public final class MapDrawer {
 	public static final Identifier PLAYER = Identifier.withDefaultNamespace("textures/map/decorations/player.png");
 	public static final Identifier PLAYER_OFF_MAP = Identifier.withDefaultNamespace("textures/map/decorations/player_off_map.png");
 	public static final Identifier PLAYER_OFF_LIMITS = Identifier.withDefaultNamespace("textures/map/decorations/player_off_limits.png");
-	/** Vanilla draws the 128 px map inside a 142 px paper (7 px border on each side). */
-	public static final float FRAME_RATIO = 7.0F / 128.0F;
 	private static final int UNEXPLORED = 0xFF000000;
 
 	private MapDrawer() {
@@ -59,9 +57,54 @@ public final class MapDrawer {
 		}
 	}
 
-	/** Paper background stretched over the given rectangle, like the vanilla map item. */
-	public static void drawBackground(final GuiGraphicsExtractor graphics, final int x, final int y, final int width, final int height) {
-		graphics.blit(RenderPipelines.GUI_TEXTURED, MAP_BACKGROUND, x, y, 0.0F, 0.0F, width, height, 64, 64, 64, 64);
+	/** Texels of the paper texture's ragged edge that are drawn as unscaled corners and edges. */
+	private static final int PAPER_EDGE = 8;
+	/** Texels of paper visible around the map content (the ragged edge is about 5 texels deep). */
+	public static final int PAPER_INSET = 6;
+
+	/**
+	 * Draws the vanilla map paper as a nine-slice with square texels of {@code texel} GUI pixels,
+	 * so the ragged border keeps its shape on any size instead of being stretched.
+	 */
+	public static void drawPaper(final GuiGraphicsExtractor graphics, final int x, final int y, final int width, final int height, final float texel) {
+		int corner = Math.max(1, Math.round(PAPER_EDGE * texel));
+		int inner = 64 - PAPER_EDGE * 2;
+		int segment = Math.max(1, Math.round(inner * texel));
+		int right = x + width - corner;
+		int bottom = y + height - corner;
+		int far = 64 - PAPER_EDGE;
+
+		paperPart(graphics, x, y, corner, corner, 0, 0, PAPER_EDGE, PAPER_EDGE);
+		paperPart(graphics, right, y, corner, corner, far, 0, PAPER_EDGE, PAPER_EDGE);
+		paperPart(graphics, x, bottom, corner, corner, 0, far, PAPER_EDGE, PAPER_EDGE);
+		paperPart(graphics, right, bottom, corner, corner, far, far, PAPER_EDGE, PAPER_EDGE);
+
+		for (int px = x + corner; px < right; px += segment) {
+			int len = Math.min(segment, right - px);
+			int src = srcTexels(len, segment, inner);
+			paperPart(graphics, px, y, len, corner, PAPER_EDGE, 0, src, PAPER_EDGE);
+			paperPart(graphics, px, bottom, len, corner, PAPER_EDGE, far, src, PAPER_EDGE);
+		}
+
+		for (int py = y + corner; py < bottom; py += segment) {
+			int len = Math.min(segment, bottom - py);
+			int src = srcTexels(len, segment, inner);
+			paperPart(graphics, x, py, corner, len, 0, PAPER_EDGE, PAPER_EDGE, src);
+			paperPart(graphics, right, py, corner, len, far, PAPER_EDGE, PAPER_EDGE, src);
+		}
+
+		// The middle of the texture is plain paper, so one stretched piece is enough.
+		if (right > x + corner && bottom > y + corner) {
+			paperPart(graphics, x + corner, y + corner, right - x - corner, bottom - y - corner, PAPER_EDGE, PAPER_EDGE, inner, inner);
+		}
+	}
+
+	private static int srcTexels(final int length, final int segment, final int inner) {
+		return Mth.clamp(Math.round((float)inner * length / segment), 1, inner);
+	}
+
+	private static void paperPart(final GuiGraphicsExtractor graphics, final int x, final int y, final int width, final int height, final int u, final int v, final int srcWidth, final int srcHeight) {
+		graphics.blit(RenderPipelines.GUI_TEXTURED, MAP_BACKGROUND, x, y, u, v, width, height, srcWidth, srcHeight, 64, 64);
 	}
 
 	/** Draws the map tiles that cover the view, clipped to it. */
