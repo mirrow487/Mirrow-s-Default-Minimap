@@ -6,6 +6,7 @@
 	"description": "A client-side minimap that looks exactly like a filled vanilla map.",
 	"authors": ["Mirrow"],
 	"license": "MIT",
+	"icon": "assets/mirrows_default_minimap/icon.png",
 	"environment": "client",
 	"entrypoints": {
 		"client": ["com.mirrow.defaultminimap.MirrowsDefaultMinimapClient"]
